@@ -30,7 +30,7 @@ import (
 const (
 	defaultURLPrefix          = "/loginsocial/"
 	defaultConnectSuccessURL  = "/?flag=connect_success"
-	defaultConnectFailedURL   = "/login?flag=connect_failed"
+	defaultConnectFailedURL   = "/?flag=connect_failed"
 	defaultLoginURL           = "/loginsocial"
 	defaultConnectRegisterURL = "/register/connect"
 )
@@ -151,6 +151,7 @@ func (this *SocialAuth) OAuthAccess(ctx *context.Context) (redirect string, user
 	_, isLogin := this.app.IsUserLogin(ctx)
 
 	defer func() {
+		fmt.Println("redirect-:", redirect)
 		if len(redirect) == 0 {
 			if failedErr != nil {
 				if isLogin {
@@ -210,7 +211,7 @@ func (this *SocialAuth) OAuthAccess(ctx *context.Context) (redirect string, user
 			ctx.Input.CruSession.Set("social_connect", int(social))
 
 			redirect = this.ConnectRegisterURL
-
+			fmt.Println("redirect-1:", redirect)
 		} else if err == nil {
 			if !isLogin {
 				// login user
@@ -218,8 +219,10 @@ func (this *SocialAuth) OAuthAccess(ctx *context.Context) (redirect string, user
 				if len(redirect) == 0 && failedErr == nil {
 					redirect = this.ConnectSuccessURL
 				}
+				fmt.Println("redirect-2:", redirect)
 			} else {
 				redirect = this.ConnectSuccessURL
+				fmt.Println("redirect-3:", redirect)
 			}
 
 			// save new access token if it changed
