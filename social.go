@@ -29,7 +29,7 @@ import (
 
 const (
 	defaultURLPrefix          = "/loginsocial/"
-	defaultConnectSuccessURL  = "/login?flag=connect_success"
+	defaultConnectSuccessURL  = "/?flag=connect_success"
 	defaultConnectFailedURL   = "/login?flag=connect_failed"
 	defaultLoginURL           = "/loginsocial"
 	defaultConnectRegisterURL = "/register/connect"
