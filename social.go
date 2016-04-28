@@ -31,7 +31,7 @@ const (
 	defaultURLPrefix          = "/loginsocial/"
 	defaultConnectSuccessURL  = "/?flag=connect_success"
 	defaultConnectFailedURL   = "/?flag=connect_failed"
-	defaultLoginURL           = "/loginsocial"
+	defaultLoginURL           = "/login"
 	defaultConnectRegisterURL = "/register/connect"
 )
 
