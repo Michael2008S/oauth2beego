@@ -17,9 +17,11 @@
 package apps
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
 
 	"github.com/Michael2008S/oauth2beego"
@@ -42,7 +44,7 @@ func (p *QQ) GetPath() string {
 }
 
 func (p *QQ) GetIndentify(tok *social.Token) (string, error) {
-	uri := "https://graph.z.qq.com/moc2/me?access_token=" + url.QueryEscape(tok.AccessToken)
+	uri := "https://graph.qq.com/oauth2.0/me?access_token=" + url.QueryEscape(tok.AccessToken)
 	req := httplib.Get(uri)
 	req.SetTransport(social.DefaultTransport)
 
@@ -51,16 +53,32 @@ func (p *QQ) GetIndentify(tok *social.Token) (string, error) {
 		return "", err
 	}
 
-	vals, err := url.ParseQuery(body)
+	bodyStr := string(body)
+
+	noCallBackStr := bodyStr[10 : len(bodyStr)-4]
+
+	var f interface{}
+	err = json.Unmarshal([]byte(noCallBackStr), &f)
 	if err != nil {
-		return "", err
-	}
+		beego.Error(err)
 
-	if vals.Get("code") != "" {
-		return "", fmt.Errorf("code: %s, msg: %s", vals.Get("code"), vals.Get("msg"))
-	}
+		vals, err := url.ParseQuery(body)
+		if err != nil {
+			return "", err
+		}
+		fmt.Println("noCallBackStr:", noCallBackStr)
+		if vals.Get("code") != "" {
+			return "", fmt.Errorf("code: %s, msg: %s", vals.Get("code"), vals.Get("msg"))
+		}
 
-	return vals.Get("openid"), nil
+	} else {
+		m := f.(map[string]interface{})
+		beego.Info(m)
+		beego.Error("openid:", (m["openid"]).(string))
+		return (m["openid"]).(string), nil
+	}
+	return "", fmt.Errorf("openid no found")
+
 }
 
 var _ social.Provider = new(QQ)
